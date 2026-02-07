@@ -13,4 +13,4 @@ common.apply()
 vscode.apply(flavor="microsoft")  # or flavor="oss"
 git_tools.apply()
 uv_tools.apply()
-#xfce.apply()
+xfce.apply()
