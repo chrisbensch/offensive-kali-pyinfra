@@ -10,7 +10,7 @@ bootstrap_sudo.apply()
 
 # 2) After that, everything else can assume passwordless sudo.
 common.apply()
-vscode.apply(flavor="microsoft")  # or flavor="oss"
+vscode.apply()  # or flavor="oss"
 git_tools.apply()
 uv_tools.apply()
 xfce.apply()
