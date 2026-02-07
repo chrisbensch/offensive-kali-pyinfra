@@ -28,4 +28,4 @@ pyinfra --version
 
 print "[*] Running pyinfra locally..."
 cd "$REPO_DIR"
-pyinfra inventory.py deploy.py --dry
+pyinfra inventory.py deploy.py
