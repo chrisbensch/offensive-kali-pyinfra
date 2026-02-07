@@ -4,7 +4,7 @@ from pyinfra.facts.server import Home
 from pyinfra.operations import files, server
 
 
-def apply(archive_path="captures/xfce-panel-capture.tar.gz"):
+def apply(archive_path="captures/xfce/xfce-panel-capture.tar.gz"):
     """
     Restores:
       - ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml
