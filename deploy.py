@@ -2,7 +2,7 @@
 from pyinfra import config
 #config.SUDO = True  # makes sudo global default for operations
 
-from tasks import bootstrap_sudo, common, git_tools, uv_tools, vscode_repo, qterminal, vscode_extensions, xfce
+from tasks import bootstrap_sudo, common, git_tools, uv_tools, vscode_repo, qterminal, vscode_extensions, xfce, xfce_panel_restore
 
 
 # 1) First run: you’ll need to satisfy sudo prompting somehow for bootstrap_sudo.
@@ -16,3 +16,4 @@ uv_tools.apply()
 vscode_extensions.apply()
 qterminal.apply()
 xfce.apply()
+xfce_panel_restore.apply()

@@ -21,6 +21,7 @@ VSCODE_EXTENSIONS = [
     "ms-python.python",
     "ms-azuretools.vscode-docker",
     "redhat.vscode-yaml",
+    "eamodio.gitlens",
 ]
 
 UV_TOOLS = [
