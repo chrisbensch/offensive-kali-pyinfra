@@ -17,6 +17,12 @@ OPT_REPOS = [
     ("pspy", "https://github.com/DominicBreuker/pspy.git"),
 ]
 
+VSCODE_EXTENSIONS = [
+    "ms-python.python",
+    "ms-azuretools.vscode-docker",
+    "redhat.vscode-yaml",
+]
+
 UV_TOOLS = [
     # examples; replace with what you want
     "ruff",
