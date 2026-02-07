@@ -5,6 +5,7 @@ APT_COMMON = [
     "git", "curl", "wget",
     "xfconf",  # for xfconf-query
     "build-essential", "python3-dev", "rustc", # at minimum for netexec
+    "code",
 ]
 
 APT_CUSTOM_TOOLS = [
