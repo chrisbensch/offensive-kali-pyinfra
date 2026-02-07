@@ -4,14 +4,15 @@ from pyinfra.facts.server import Home
 from pyinfra.operations import server
 
 
-def apply(archive_path="captures/xfce/xfce-panel-capture.tar.gz"):
+def apply(archive_path="captures/xfce/xfce-panel-capture.tar.gz", start_panel=True):
     """
-    Restore an XFCE panel snapshot created from:
+    Restores XFCE panel snapshot from a tar.gz created from:
       - ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml
       - ~/.config/xfce4/panel/
 
-    archive_path:
-      Path to the tar.gz inside your repo (relative is fine if you run pyinfra from repo root).
+    start_panel:
+      - True: attempt to start panel (without xfce4-panel -r / DBus restart)
+      - False: just restore files; user can log out/in or start panel manually
     """
     home = host.get_fact(Home)
 
@@ -19,9 +20,11 @@ def apply(archive_path="captures/xfce/xfce-panel-capture.tar.gz"):
     xfconf_xml_file = f"{xfconf_xml_dir}/xfce4-panel.xml"
     panel_dir = f"{home}/.config/xfce4/panel"
 
+    start_panel_sh = "1" if start_panel else "0"
+
     server.shell(
         name="xfce_restore: restore panel + launchers from capture",
-        _sudo=False,  # critical: this must run as the desktop user
+        _sudo=False,  # must run as the desktop user
         commands=[
             rf"""
 set -euo pipefail
@@ -29,7 +32,8 @@ set -euo pipefail
 ARCHIVE="{archive_path}"
 test -f "$ARCHIVE" || {{ echo "Missing archive: $ARCHIVE"; exit 1; }}
 
-# Stop panel + xfconfd to avoid it rewriting config while we restore
+# Stop panel & xfconf daemon to avoid them rewriting config mid-restore
+# (Common troubleshooting flow is quit panel, kill xfconfd, then start panel again.) [[6]]
 pkill -u "$USER" xfce4-panel 2>/dev/null || true
 pkill -u "$USER" xfconfd 2>/dev/null || true
 
@@ -48,9 +52,7 @@ STAMP="$(date -u +%Y%m%d-%H%M%SZ)"
 [ -f "{xfconf_xml_file}" ] && cp -a "{xfconf_xml_file}" "{xfconf_xml_file}.bak-$STAMP" || true
 [ -d "{panel_dir}" ] && cp -a "{panel_dir}" "{panel_dir}.bak-$STAMP" || true
 
-# Restore panel XML + launcher directories
 cp -a "$RESTORE_TMP/xfce/xfce4-panel.xml" "{xfconf_xml_file}"
-
 rm -rf "{panel_dir}"
 cp -a "$RESTORE_TMP/xfce/panel" "{panel_dir}"
 
@@ -63,19 +65,19 @@ for d in "{panel_dir}"/launcher-*; do
     EMPTY=$((EMPTY+1))
   fi
 done
-
 if [ "$EMPTY" -ne 0 ]; then
-  echo "Restore completed, but one or more launcher dirs are empty (blank icons likely)."
+  echo "Restore completed, but one or more launcher dirs are empty."
   exit 1
 fi
 
-# Best-effort restart (only works if you're in an XFCE GUI session)
-if [ -n "${{DISPLAY:-}}" ]; then
-  # xfconfd will respawn; panel reload/restart is best-effort
-  xfce4-panel -r 2>/dev/null || (nohup xfce4-panel >/dev/null 2>&1 &)
-else
-  echo "No DISPLAY set; not restarting panel. Log out/in or restart panel from the GUI session."
+# IMPORTANT: avoid `xfce4-panel -r` (can crash / trigger restart errors). [[2]]
+# Many systems will auto-restart the panel after it is killed. [[2]]
+if [ "{start_panel_sh}" = "1" ] && [ -n "${{DISPLAY:-}}" ]; then
+  # Start a new panel process directly (no DBus restart); don't fail deploy if it can't start here.
+  nohup xfce4-panel >/dev/null 2>&1 &
 fi
+
+echo "XFCE panel restore complete."
 """
         ],
     )
