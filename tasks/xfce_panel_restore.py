@@ -51,8 +51,10 @@ def apply(archive_path="captures/xfce/xfce-panel-capture.tar.gz"):
             f'[ -d "{panel_dir}" ] && cp -a "{panel_dir}" "{panel_dir}.bak-$STAMP" || true',
 
             # Restore the captured files
+            f'echo "Restoring captured files..."'
             f'cp -a "$RESTORE_TMP/xfce/xfce4-panel.xml" "{xfconf_xml_file}"',
             # Replace panel directory contents to match capture
+            f'echo "Restoring panel dir..."'
             f'rm -rf "{panel_dir}"',
             f'cp -a "$RESTORE_TMP/xfce/panel" "{panel_dir}"',
 
