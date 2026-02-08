@@ -10,12 +10,13 @@ bootstrap_sudo.apply()
 
 # 2) After that, everything else can assume passwordless sudo.
 vscode_repo.apply()
-common.apply()
-git_tools.apply()
-uv_tools.apply()
 oh_my_zsh.apply()
 powerlevel10k.apply()
 zsh_plugins.apply()
+common.apply()
+git_tools.apply()
+uv_tools.apply()
+
 vscode_extensions.apply()
 qterminal.apply()
 xfce.apply()
