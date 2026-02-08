@@ -30,9 +30,9 @@ def apply():
     server.shell(
         name="zsh_plugins: merge plugins into .zshrc",
         commands=[
-            r"""
+            f"""
 set -euo pipefail
-ZSHRC="$1"
+ZSHRC="{zshrc}"
 DESIRED="zsh-autosuggestions zsh-syntax-highlighting"
 
 if [ ! -f "$ZSHRC" ]; then
@@ -55,5 +55,4 @@ fi
 """.strip(),
         ],
         _sudo=False,
-        args=[zshrc],
     )
