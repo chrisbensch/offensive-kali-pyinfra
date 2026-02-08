@@ -4,8 +4,11 @@ KALI_USER = "kali"
 APT_COMMON = [
     "git", "curl", "wget",
     "xfconf",  # for xfconf-query
-    "build-essential", "python3-dev", "rustc", # at minimum for netexec
+    "build-essential", "python3-dev", "rustc", # minimum for netexec
     "code",
+    "obsidian",
+    "nmap",
+    "xsltproc",
 ]
 
 APT_CUSTOM_TOOLS = [
@@ -36,6 +39,7 @@ UV_GIT_TOOLS = [
     # "git+https://github.com/org/project.git@v1.2.3",
     # "git+https://github.com/org/project.git@main",
     #"git+https://github.com/projectname/project.git",
+    "git+https://github.com/sharkeonix/nmap-unleashed.git",
 ]
 
 UV_PIP_PACKAGES = [
