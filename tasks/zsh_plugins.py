@@ -1,7 +1,7 @@
 # tasks/zsh_plugins.py
 from pyinfra import host
 from pyinfra.facts.server import Home
-from pyinfra.operations import server, files
+from pyinfra.operations import server, files, git
 
 
 def apply():
@@ -9,22 +9,18 @@ def apply():
     plugins_dir = f"{home}/.oh-my-zsh/custom/plugins"
     zshrc = f"{home}/.zshrc"
 
-    server.shell(
-        name="zsh_plugins: install zsh-autosuggestions",
-        commands=[
-            f'test -d "{plugins_dir}/zsh-autosuggestions" && exit 0',
-            f'git clone --depth=1 https://github.com/zsh-users/zsh-autosuggestions "{plugins_dir}/zsh-autosuggestions"',
-        ],
-        _sudo=False,
+    git.repo(
+        name="zsh_plugins: clone zsh-autosuggestions if missing",
+        src="https://github.com/zsh-users/zsh-autosuggestions.git",
+        dest=f"{plugins_dir}/zsh-autosuggestions",
+        pull=False,
     )
 
-    server.shell(
-        name="zsh_plugins: install zsh-syntax-highlighting",
-        commands=[
-            f'test -d "{plugins_dir}/zsh-syntax-highlighting" && exit 0',
-            f'git clone --depth=1 https://github.com/zsh-users/zsh-syntax-highlighting "{plugins_dir}/zsh-syntax-highlighting"',
-        ],
-        _sudo=False,
+    git.repo(
+        name="zsh_plugins: clone zsh-syntax-highlighting if missing",
+        src="https://github.com/zsh-users/zsh-syntax-highlighting.git",
+        dest=f"{plugins_dir}/zsh-syntax-highlighting",
+        pull=False,
     )
 
     server.shell(
