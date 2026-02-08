@@ -29,27 +29,60 @@ def apply():
             f"""
 set -euo pipefail
 ZSHRC="{zshrc}"
-DESIRED="zsh-autosuggestions zsh-syntax-highlighting"
+export ZSHRC
+python3 - <<'PY'
+import os
+import re
 
-if [ ! -f "$ZSHRC" ]; then
-  echo "plugins=(git zsh-autosuggestions zsh-syntax-highlighting)" >> "$ZSHRC"
-  exit 0
-fi
+zshrc = os.environ["ZSHRC"]
+desired = ["zsh-autosuggestions", "zsh-syntax-highlighting"]
 
-if grep -q '^plugins=' "$ZSHRC"; then
-  LINE="$(grep -m1 '^plugins=' "$ZSHRC")"
-  CURRENT="$(printf "%s" "$LINE" | sed -n 's/^plugins=(\(.*\))$/\1/p')"
-  NEW="$CURRENT"
-  for p in $DESIRED; do
-    printf "%s\n" $NEW | tr ' ' '\n' | grep -qx "$p" || NEW="$NEW $p"
-  done
-  # Normalize whitespace to avoid empty plugin entries.
-  set -- $NEW
-  NEW="$*"
-  sed -i "0,/^plugins=/{{s|^plugins=.*$|plugins=($NEW)|}}" "$ZSHRC"
-else
-  echo "plugins=(git zsh-autosuggestions zsh-syntax-highlighting)" >> "$ZSHRC"
-fi
+def parse_plugins(line: str):
+    m = re.match(r"^plugins=\\((.*)\\)\\s*$", line)
+    if not m:
+        return []
+    body = m.group(1)
+    # Keep only printable, non-empty tokens (avoid control chars).
+    tokens = re.findall(r"[A-Za-z0-9_.+-]+", body)
+    return tokens
+
+if not os.path.exists(zshrc):
+    with open(zshrc, "a", encoding="utf-8") as f:
+        f.write("plugins=(git zsh-autosuggestions zsh-syntax-highlighting)\\n")
+    raise SystemExit(0)
+
+with open(zshrc, "r", encoding="utf-8", errors="ignore") as f:
+    lines = f.readlines()
+
+idx = None
+current = []
+for i, line in enumerate(lines):
+    if line.startswith("plugins="):
+        idx = i
+        current = parse_plugins(line)
+        break
+
+# Preserve existing order; append desired if missing.
+seen = set()
+merged = []
+for p in current:
+    if p not in seen:
+        merged.append(p)
+        seen.add(p)
+for p in desired:
+    if p not in seen:
+        merged.append(p)
+        seen.add(p)
+
+newline = "plugins=(" + " ".join(merged) + ")\\n"
+if idx is None:
+    lines.append(newline)
+else:
+    lines[idx] = newline
+
+with open(zshrc, "w", encoding="utf-8") as f:
+    f.writelines(lines)
+PY
 """.strip(),
         ],
         _sudo=False,
