@@ -30,7 +30,7 @@ def apply():
     server.shell(
         name="zsh_plugins: merge plugins into .zshrc",
         commands=[
-            r"""
+            f"""
 set -euo pipefail
 ZSHRC="{zshrc}"
 DESIRED="zsh-autosuggestions zsh-syntax-highlighting"
@@ -48,11 +48,11 @@ if grep -q '^plugins=' "$ZSHRC"; then
     printf "%s\n" $NEW | tr ' ' '\n' | grep -qx "$p" || NEW="$NEW $p"
   done
   NEW="$(printf "%s" "$NEW" | awk '{{\$1=\$1; print}}')"
-  sed -i "0,/^plugins=/{s|^plugins=.*$|plugins=($NEW)|}" "$ZSHRC"
+  sed -i "0,/^plugins=/{{s|^plugins=.*$|plugins=($NEW)|}}" "$ZSHRC"
 else
   echo "plugins=(git zsh-autosuggestions zsh-syntax-highlighting)" >> "$ZSHRC"
 fi
-""".format(zshrc=zshrc).strip(),
+""".strip(),
         ],
         _sudo=False,
     )
