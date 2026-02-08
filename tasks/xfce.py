@@ -60,8 +60,8 @@ set_kv xfce4-power-manager /xfce4-power-manager/blank-on-battery int 0
 set_kv xfce4-power-manager /xfce4-power-manager/lock-screen-suspend-hibernate bool false
 ''',
             ],
-            _sudo=True,
-            #_sudo_user=KALI_USER,
+            # Must run as the desktop user; xfconf is per-user.
+            _sudo=False,
         )
 
     # Disable screensaver + lock (depends on xfce4-screensaver vs xscreensaver)
@@ -95,6 +95,6 @@ set_kv xfce4-screensaver /lock/enabled bool false
                 # (leave this commented unless you confirm you use xscreensaver)
                 # r"rm -f ~/.config/autostart/xscreensaver.desktop || true",
             ],
-            _sudo=True,
-            #_sudo_user=KALI_USER,
+            # Must run as the desktop user; xfconf is per-user.
+            _sudo=False,
         )
