@@ -43,6 +43,9 @@ if grep -q '^plugins=' "$ZSHRC"; then
   for p in $DESIRED; do
     printf "%s\n" $NEW | tr ' ' '\n' | grep -qx "$p" || NEW="$NEW $p"
   done
+  # Normalize whitespace to avoid empty plugin entries.
+  set -- $NEW
+  NEW="$*"
   sed -i "0,/^plugins=/{{s|^plugins=.*$|plugins=($NEW)|}}" "$ZSHRC"
 else
   echo "plugins=(git zsh-autosuggestions zsh-syntax-highlighting)" >> "$ZSHRC"
