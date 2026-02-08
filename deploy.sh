@@ -3,6 +3,18 @@ set -euo pipefail
 
 REPO_DIR="${0:A:h}"
 
+ensure_curl() {
+  if ! command -v curl >/dev/null 2>&1; then
+    print "[*] curl not found; installing..."
+    sudo apt-get update
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y curl
+  fi
+}
+
+ensure_curl
+
+
+
 # Ensure uv is usable in *this* run (installer typically places it in ~/.local/bin)
 export PATH="$HOME/.local/bin:$PATH"
 
