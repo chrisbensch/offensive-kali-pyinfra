@@ -32,10 +32,29 @@ def apply():
             commands=[
                 # List existing keys for troubleshooting/adjustment:
                 r"xfconf-query -c xfce4-power-manager -lv || true",
-                # Common toggles (may vary by version; adjust to match what -lv shows):
-                r'xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/dpms-enabled -n -t bool -s false || true',
-                r'xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/blank-on-ac -n -t int -s 0 || true',
-                r'xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/blank-on-battery -n -t int -s 0 || true',
+                # Idempotent setter: only write when missing or different.
+                r'''
+set -euo pipefail
+set_kv() {
+  channel="$1"
+  path="$2"
+  type="$3"
+  value="$4"
+  current="$(xfconf-query -c "$channel" -p "$path" 2>/dev/null || true)"
+  if [ -z "$current" ]; then
+    xfconf-query -c "$channel" -p "$path" -n -t "$type" -s "$value" || true
+  elif [ "$current" != "$value" ]; then
+    xfconf-query -c "$channel" -p "$path" -t "$type" -s "$value" || true
+  fi
+}
+
+# Common toggles (may vary by version; adjust to match what -lv shows):
+set_kv xfce4-power-manager /xfce4-power-manager/dpms-enabled bool false
+set_kv xfce4-power-manager /xfce4-power-manager/blank-on-ac int 0
+set_kv xfce4-power-manager /xfce4-power-manager/blank-on-battery int 0
+# Observed on this VM: disable locking on suspend/hibernate.
+set_kv xfce4-power-manager /xfce4-power-manager/lock-screen-suspend-hibernate bool false
+''',
             ],
             _sudo=True,
             #_sudo_user=KALI_USER,
@@ -48,8 +67,25 @@ def apply():
             commands=[
                 # If xfce4-screensaver is in use:
                 r"xfconf-query -c xfce4-screensaver -lv || true",
-                r'xfconf-query -c xfce4-screensaver -p /saver/enabled -n -t bool -s false || true',
-                r'xfconf-query -c xfce4-screensaver -p /lock/enabled -n -t bool -s false || true',
+                r'''
+set -euo pipefail
+set_kv() {
+  channel="$1"
+  path="$2"
+  type="$3"
+  value="$4"
+  current="$(xfconf-query -c "$channel" -p "$path" 2>/dev/null || true)"
+  if [ -z "$current" ]; then
+    xfconf-query -c "$channel" -p "$path" -n -t "$type" -s "$value" || true
+  elif [ "$current" != "$value" ]; then
+    xfconf-query -c "$channel" -p "$path" -t "$type" -s "$value" || true
+  fi
+}
+
+set_kv xfce4-screensaver /saver/enabled bool false
+set_kv xfce4-screensaver /saver/mode int 0
+set_kv xfce4-screensaver /lock/enabled bool false
+''',
 
                 # If xscreensaver is used instead, you may prefer removing/disable its autostart:
                 # (leave this commented unless you confirm you use xscreensaver)
