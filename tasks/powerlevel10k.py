@@ -1,7 +1,7 @@
 # tasks/powerlevel10k.py
 from pyinfra import host
 from pyinfra.facts.server import Home
-from pyinfra.operations import server, files
+from pyinfra.operations import server, files, git
 
 
 def apply():
@@ -11,13 +11,11 @@ def apply():
     zshrc = f"{home}/.zshrc"
 
     # Install theme if missing (non-interactive).
-    server.shell(
-        name="powerlevel10k: install theme if missing",
-        commands=[
-            f'test -d "{theme_dir}" && exit 0',
-            f'git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "{theme_dir}"',
-        ],
-        _sudo=False,
+    git.repo(
+        name="powerlevel10k: clone theme if missing",
+        src="https://github.com/romkatv/powerlevel10k.git",
+        dest=theme_dir,
+        pull=False,
     )
 
     files.put(
