@@ -50,6 +50,10 @@ set_kv() {
 
 # Common toggles (may vary by version; adjust to match what -lv shows):
 set_kv xfce4-power-manager /xfce4-power-manager/dpms-enabled bool false
+set_kv xfce4-power-manager /xfce4-power-manager/dpms-on-ac int 0
+set_kv xfce4-power-manager /xfce4-power-manager/dpms-off-ac int 0
+set_kv xfce4-power-manager /xfce4-power-manager/dpms-on-battery int 0
+set_kv xfce4-power-manager /xfce4-power-manager/dpms-off-battery int 0
 set_kv xfce4-power-manager /xfce4-power-manager/blank-on-ac int 0
 set_kv xfce4-power-manager /xfce4-power-manager/blank-on-battery int 0
 # Observed on this VM: disable locking on suspend/hibernate.
