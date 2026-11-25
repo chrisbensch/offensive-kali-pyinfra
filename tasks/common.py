@@ -1,6 +1,6 @@
 # tasks/common.py
 from pyinfra.operations import apt
-from data import APT_COMMON, APT_CUSTOM_TOOLS
+from data import APT_COMMON
 
 def apply():
     apt.update(
@@ -19,9 +19,3 @@ def apply():
         packages=APT_COMMON,
         _sudo=True,
     )
-
-#    apt.packages(
-#        name="common: install custom apt tools",
-#        packages=APT_CUSTOM_TOOLS,
-#        sudo=True,
-#    )

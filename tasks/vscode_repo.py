@@ -1,4 +1,3 @@
-# tasks/vscode.py
 from pyinfra.operations import server
 
 def apply():
@@ -12,7 +11,6 @@ def apply():
             "install -o root -g root -m 644 /tmp/packages.microsoft.gpg /etc/apt/trusted.gpg.d/packages.microsoft.gpg",
             "rm -f /tmp/packages.microsoft.gpg",
 
-            # Multi-arch selector (explicit) [[6]]
             r"""sh -c 'echo "deb [arch=amd64,arm64 signed-by=/etc/apt/trusted.gpg.d/packages.microsoft.gpg] https://packages.microsoft.com/repos/vscode/ stable main" > /etc/apt/sources.list.d/vscode.list'""",
         ],
         _sudo=True,

@@ -13,8 +13,6 @@ ensure_curl() {
 
 ensure_curl
 
-
-
 # Ensure uv is usable in *this* run (installer typically places it in ~/.local/bin)
 export PATH="$HOME/.local/bin:$PATH"
 
@@ -32,7 +30,6 @@ if ! command -v pyinfra >/dev/null 2>&1; then
 fi
 
 print "[*] Updating zsh PATH via uv..."
-# According to uv guidance, this can set PATH for uv in ~/.zshenv [[1]]
 uv tool update-shell
 
 print "[*] pyinfra version:"

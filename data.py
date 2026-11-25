@@ -11,10 +11,6 @@ APT_COMMON = [
     "xsltproc",
 ]
 
-APT_CUSTOM_TOOLS = [
-    # add your apt-installed tools here
-]
-
 OPT_REPOS = [
     ("linpeas", "https://github.com/peass-ng/PEASS-ng.git"),
     ("pspy", "https://github.com/DominicBreuker/pspy.git"),
@@ -25,26 +21,6 @@ VSCODE_EXTENSIONS = [
     "ms-azuretools.vscode-docker",
     "redhat.vscode-yaml",
     "eamodio.gitlens",
-]
-
-UV_TOOLS = [
-    # examples; replace with what you want
-    "ruff",
-    "httpie",
-    "updog",
-]
-
-UV_GIT_TOOLS = [
-    # You can pin a tag/branch/commit like pip:
-    # "git+https://github.com/org/project.git@v1.2.3",
-    # "git+https://github.com/org/project.git@main",
-    #"git+https://github.com/projectname/project.git",
-    "git+https://github.com/sharkeonix/nmap-unleashed.git",
-]
-
-UV_PIP_PACKAGES = [
-    "ipython",
-    "requests",
 ]
 
 UV_TOOL_SPECS = [
@@ -59,21 +35,18 @@ UV_TOOL_SPECS = [
     },
 ]
 
-# XFCE tuning you want to enforce
-XFCE = {
-    # launcher ordering: list of .desktop files (we'll apply to a chosen launcher plugin)
-    "launcher_items": [
-        "xfce4-terminal.desktop",
-        "firefox-esr.desktop",
-        # add more; order here is the order on the panel
-    ],
+# Each row is one panel icon. Multiple entries make a dropdown.
+# Within an entry, list alternative desktop filenames in preference order.
+PANEL_LAUNCHERS = [
+    [("firefox-esr.desktop",)],
+    [("obsidian.desktop",)],
+    [("com.microsoft.VSCode.desktop", "code.desktop")],
+    [("org.xfce.mousepad.desktop", "xfce-text-editor.desktop")],
+    [("xfce4-terminal-emulator.desktop",), ("root-terminal.desktop",)],
+]
 
-    # Power/screensaver/lock intent (we’ll set keys explicitly, but you should confirm key names with -lv once)
+XFCE = {
     "disable_power_manager": True,
     "disable_screensaver": True,
     "disable_screen_lock": True,
-
-    # If you want to “pin” the launcher plugin id (simple + deterministic):
-    # find it once with: xfconf-query -c xfce4-panel -lv | less
-    "panel_launcher_plugin_id": 3,
 }
